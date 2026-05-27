@@ -1,0 +1,56 @@
+[project]
+name = "cmots-alt"
+version = "0.1.0"
+description = "CMOTS-alternative Indian financial market data pipeline (Phase 1)"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "Proprietary" }
+authors = [{ name = "cmots-alt" }]
+
+dependencies = [
+    # HTTP + scraping primitives
+    "httpx>=0.28",
+    "curl_cffi>=0.7",
+    "tenacity>=9.0",
+
+    # Data
+    "polars>=1.20",
+    "pyarrow>=18.0",
+    "pandera>=0.22",
+
+    # Excel
+    "xlsxwriter>=3.2",
+    "openpyxl>=3.1",
+
+    # Config / typing / CLI
+    "pydantic>=2.9",
+    "pydantic-settings>=2.6",
+    "pyyaml>=6.0",
+    "typer>=0.15",
+    "python-dateutil>=2.9",
+
+    # Logging
+    "structlog>=24.4",
+
+    # API (orchestration layer)
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.32",
+]
+
+[project.scripts]
+cmots = "cmots_alt.cli:app"
+cmots-api = "cmots_alt.api.__main__:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/cmots_alt"]
+
+[tool.uv]
+package = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
