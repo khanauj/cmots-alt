@@ -1,0 +1,583 @@
+import * as encryptionService from './EncryptionService.js';
+import {
+    refreshToken
+} from './TokenService.js';
+
+
+$(document).ready(function () {
+    var Searchdata = $('.selectoptn').data('value');
+    $('#PSFrequency .select-selected').text("Monthly");
+    var psDate = new Date();
+    var year = psDate.getFullYear();
+    setSessionWithExpiry(StoreKeys.SCHEME_NAMES_STORE, null);
+    setSessionWithExpiry(StoreKeys.FUND_CATEGORY_STORE, null);
+    if (document.location.search.length) {
+        var FundId = GetQueryStringValues("FundID");
+        var PSFreq = GetQueryStringValues("Portfoliotype");
+        PSFreq = decodeURIComponent(PSFreq)
+
+        if (FundId != "0" && PSFreq != "") {
+
+            BindPortfolioSheetsQS(FundId, PSFreq);
+
+        }
+
+        GetFundCategories();
+        BindPortfolioSheets();
+
+    }
+
+
+    else {
+        $('.error-message').css('display', 'block');
+        $('.portfolios-table').hide();
+        var psDate = new Date();
+        psDate.setDate(0);
+
+        BindPortfolioSheets();
+        GetFundCategories();
+        getFundNames();
+        bindFundNames();
+        // BindRecentPortfolios();
+        getMonthsByYear(year);
+    }
+});
+var psDate = new Date();
+//  psDate.setDate(0);
+var psYear = psDate.getFullYear();
+var psMonth = psDate.getMonth();
+$('#PSYear .select-selected').text(psYear);
+
+var monthNames = ["January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+];
+$('#PSMonth .select-selected').text(monthNames[psMonth]);
+// $("#PSYear select").val("2");
+
+$('#PSFrequency').parent(".empty-val-input").find(".placeholder").hide();
+$("#PSFrequency").parent(".empty-val-input").find("label").css({
+    opacity: "1",
+    transform: "translateX(0%) translateY(27px)",
+});
+$("#txtFundPortfolio").on('blur', function () {
+    //if ($("#txtFundPortfolio").val().trim().length == 0) {
+    //    $('.portfolios-table').hide();
+    //    $('#tblPortfoliosheets').html('');
+    //}
+    BindPortfolioSheets();
+});
+var FundtxtID = "#txtFundPortfolio";
+//  refreshToken(function () {
+//getFundNames(FundtxtID);
+//});
+$('#PSYear,#PSFrequency').click(function () {
+    if (($("#PSFrequency .select-selected").text().toLowerCase() == "half yearly")) {
+
+        $('#PSMonth').children().remove();
+        $('#PSMonth').append('<select class="floating-select"><option value="0">Select</option></select>');
+        $('#PSMonth .floating-select').append('<option value="">March</option>');
+        $('#PSMonth .floating-select').append('<option value="">September</option>');
+        CustomdropdownBindByID('PSMonth');
+    }
+    else {
+
+        var year = $("#PSYear").find('.select-selected').text();
+        $('#PSMonth .select-selected').text("");
+        var Searchdata = $('.selectoptn').data('value');
+        var FundId = Searchdata;
+        GetMonthByFundId(FundId, year);
+        getMonthsByYear(year);
+    }
+
+    if ($(this).find('.floating-select').val() == "0") {
+        $(this).find(".select-items").children().removeClass('same-as-selected');
+        $(this).parent(".empty-val-input").find(".placeholder").removeAttr("style");
+        $(this).parent(".empty-val-input").find("label").hide();
+        $(this).find(".select-selected").text("");
+        BindPortfolioSheets();
+    } else {
+        $(this).parent(".empty-val-input").find("label").show();
+        BindPortfolioSheets();
+    }
+});
+
+$('#PSMonth, #PSFrequency,#txtFund').click(function () {
+    //if (($("#PSFrequency .select-selected").text().toLowerCase() == "half yearly")) {
+    //    $('#PSMonth').children().remove();
+    //    $('#PSMonth').append('<select class="floating-select"><option value="0">Select</option></select>');
+    //    $('#PSMonth .floating-select').append('<option value="">March</option>');
+    //    $('#PSMonth .floating-select').append('<option value="">September</option>');
+    //    CustomdropdownBindByID('PSMonth');
+    //}
+    if ($(this).find('.floating-select').val() == "0") {
+        $(this).find(".select-items").children().removeClass('same-as-selected');
+        $(this).parent(".empty-val-input").find(".placeholder").removeAttr("style");
+        $(this).parent(".empty-val-input").find("label").hide();
+        $(this).find(".select-selected").text("");
+        BindPortfolioSheets();
+    }
+
+
+    else {
+
+        $(this).parent(".empty-val-input").find("label").show();
+        BindPortfolioSheets();
+    }
+});
+$('#FSCategeory').click(function () {
+
+    //var year = $(this).find('.select-selected').text();
+    $('#FSMonth .select-selected').text("");
+    //getMonthsByYear(year);
+    if ($(this).find('.floating-select').val() == "0") {
+        $(this).find(".select-items").children().removeClass('same-as-selected');
+        $(this).parent(".empty-val-input").find(".placeholder").removeAttr("style");
+        $(this).parent(".empty-val-input").find("label").hide();
+        $(this).find(".select-selected").text("");
+
+        bindFundNames(FundtxtID)
+    } else {
+        $(this).parent(".empty-val-input").find("label").show();
+
+        getFundNames(FundtxtID)
+    }
+});
+
+function getPortfolioDocsforQS(FundId, PSYear, PSMonth, PSFreq) {
+    var url = DataBindUrls.PORTFOLIO_BY_QS;
+
+    var ReqData = {
+        FundId: FundId,
+        PSYear: PSYear,
+        PSMonth: PSMonth,
+        PSFrequency: PSFreq
+
+    }
+    $.ajax({
+        type: "POST",
+        url: url,
+        dataType: "json",
+        data: JSON.stringify(ReqData),
+        contentType: 'application/json;charset=utf-8',
+        error: function (xhr) {
+            console.log("Something seems Wrong" + JSON.stringify(xhr));
+        },
+        success: function (data) {
+            if (data != "") {
+                window.location.href = data;
+            }
+        }
+    });
+}
+
+function BindPortfolioSheets() {
+    var FundId = 0;
+    var schemeNames = getSessionWithExpiry(StoreKeys.SCHEME_NAMES_STORE);
+    var value = $(".selectoptn").text();
+
+    if (schemeNames != null) {
+        var Searchdata = $('.selectoptn').data('value');
+        var funds = JSON.parse(schemeNames);
+        funds.filter(function (item) {
+            if (item.FundName == value) {
+
+                $('#hdnFundId').val(item.FundId);
+
+            }
+        });
+
+
+    }
+    var url = DataBindUrls.SCHEME_PORTFOLIO_SHEETS;
+    var Searchdata = $('.selectoptn').data('value');
+    var Yearval = $('#PSYear').find('.floating-select').val();
+    var Monthval = $('#PSMonth').find('.floating-select').val();
+    var PSYear = $('#PSYear .select-selected').text();
+    var PSFreq = $('#PSFrequency .select-selected').text();
+    var PSMonth = $('#PSMonth .select-selected').text();
+    //var FundId = 0;
+    if ($('#txtFundPortfolio').val() != "") {
+        FundId = $("#hdnFundId").val();
+    }
+
+    var ReqData = {
+        FundId: FundId,
+        PSYear: PSYear,
+        PSMonth: PSMonth,
+        PSFrequency: PSFreq
+    }
+    $.ajax({
+        type: "POST",
+        url: url,
+        dataType: "html",
+        data: JSON.stringify(ReqData),
+        contentType: 'application/json;charset=utf-8',
+        error: function (xhr) {
+
+        },
+
+        success: function (data) {
+            $('.portfolios-table').show();
+            $('#tblPortfoliosheets').html('');
+            $('#tblPortfoliosheets').html(data);
+
+        }
+    });
+}
+
+function getFundNames(FundtxtID) {
+
+    if (getSessionWithExpiry(StoreKeys.SCHEME_NAMES_STORE) == null) {
+
+        var accessToken = localStorage.getItem(StoreKeys.API_TOKEN);
+        var sessionId = encryptionService.generateUuid(30);
+        var FundNamesReq = {
+            "FundId": null,
+            "SchemeCodes": []
+        };
+        var obj = {
+            "Requestid": encryptionService.uuid(),
+            "SessionId": sessionId,
+            "Data": JSON.stringify(FundNamesReq)
+        };
+        var url = APIURLS.FUND_SCHEME_DATA_API;
+        $.ajax({
+            type: "POST",
+            url: url,
+            headers: {
+                'Token': accessToken
+            },
+            data: JSON.stringify(obj),
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+
+                setSessionWithExpiry(StoreKeys.SCHEME_NAMES_STORE, JSON.stringify(data));
+                bindFundNames(FundtxtID);
+            }
+        });
+
+    } else {
+        bindFundNames(FundtxtID);
+    }
+}
+
+function bindFundNames(FundtxtID) {
+    var schemeNames = getSessionWithExpiry(StoreKeys.SCHEME_NAMES_STORE);
+    var funds = [];
+
+    if (schemeNames != null) {
+        funds = JSON.parse(schemeNames);
+    }
+
+    var selectedCategory = $("#FSCategeory").find('.select-selected').text().toLowerCase();
+    funds = funds.filter(p => {
+        if (selectedCategory === "liquid") {
+            return p.FundCategoryName.toLowerCase() === "liquid" || p.FundCategoryName.toLowerCase() === "debt";
+        } else if (selectedCategory === "debt") {
+            return p.FundCategoryName.toLowerCase() === "debt" || p.FundCategoryName.toLowerCase() === "liquid";
+        } else if (selectedCategory === "passive solutions") {
+            return p.FundCategoryName.toLowerCase() === "other schemes";
+        } else {
+            return p.FundCategoryName.toLowerCase() === selectedCategory;
+        }
+    });
+
+    $('#txtFund').children().remove();
+
+    // search input and results container
+    $('#txtFund').append(`
+       <label class="fundlbl"></label>
+       <div class="btn-togglefund"><button class="fundbtn"></button></div>
+        <div class="funddisaplay" style="display:none">
+        <div class="search">
+            <span class="fndsearch"><img src="/Content/Images/search.svg" alt="search"></span>
+            <input spellcheck="false" autocomplete="off" type="text" id="fundSearchInput" placeholder="Search Fund Name">
+        </div>
+        <div class="search-results" id="searchResults"></div>
+        </div>
+    `);
+
+    // Bind click event to the button
+    $('.btn-togglefund').on('click', function () {
+        $('.funddisaplay').toggle();
+        $('.fundbtn').toggleClass('active');
+    });
+
+    // Populate search results
+    if (funds.length > 0) {
+        $.each(funds, function (key, value) {
+            $('#searchResults').append('<div class="search-option" data-value="' + value.FundId + '">' + value.FundName + '</div>');
+        });
+    } else {
+        $('#searchResults').append('<div class="search-option">No funds available</div>');
+    }
+
+    // Bind search input event
+    $('#fundSearchInput').on('input', function () {
+        var searchTerm = $(this).val().toLowerCase();
+        $('#searchResults .search-option').each(function () {
+            var fundName = $(this).text().toLowerCase();
+            $(this).toggle(fundName.includes(searchTerm));
+        });
+    });
+
+    // Handle selection
+    $('#searchResults').on('click', '.search-option', function () {
+        var selectedFundName = $(this).text();
+        var selectedFundId = $(this).data('value');
+        $('#fundSearchInput').val(selectedFundName);
+    });
+
+    $('.search-option').on('click', function () {
+        $('.search-option').removeClass("selectoptn")
+        var myseletdata = $(this).data('value');
+        var selectedFundName = $(this).text();
+        $(this).addClass("selectoptn");
+        $('.fundlbl').text(selectedFundName);
+        $('.funddisaplay').hide();
+        $('#txtFund').trigger("click");
+    });
+
+    /* FLOATING LABEL JS FOR SELECT BOXES --*/
+    $(document).on("click", ".floating-form .search-option", function () {
+
+        let mainParent = $(this).parent().parent().parent().parent();
+        if ($(mainParent).find('.floating-select').val() != "0") {
+            $(mainParent).find(".placeholder").css("opacity", 0);
+            $(mainParent).find("label").css({
+                opacity: "1",
+                transform: "translateX(0%) translateY(27px)",
+            });
+        }
+        else {
+            $(mainParent).find(".placeholder").css("opacity", 1);
+            $(mainParent).find("label").css({
+                opacity: "0",
+                transform: "translateX(0%) translateY(0px)",
+            });
+
+        }
+    });
+
+    /* FLOATING LABEL JS FOR SELECT BOXES -- */
+
+}
+
+function ValidateInputs() {
+    var Isvalid = true;
+
+    if ($('#txtFundPortfolio').val().trim() == "") {
+
+        $('#errorfundPortfolio').text('Please Select Fund');
+        Isvalid = false;
+    } else {
+        $('#errorfundPortfolio').text('');
+    }
+    if (Isvalid) {
+        BindPortfolioSheets();
+    }
+
+}
+
+function getMonthsByYear(year) {
+    var Folder = "Scheme Portfolios";
+    var Req = {
+        folder: Folder,
+        year: year
+    };
+    var url = DataBindUrls.MONTHS_BY_YEAR;
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: JSON.stringify(Req),
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        success: function (data) {
+            //var dataParsed = JSON.parse(data);                
+
+            if (data.length != 0) {
+                $('#PSMonth').children().remove();
+                $('#PSMonth').append('<select class="floating-select"><option value="0">Select</option></select>');
+
+                var allMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']; //All months constant
+                //sorting wrt to the All month array  here       test >or -        
+                data.sort(function (a, b) {
+                    return allMonths.indexOf(a) - allMonths.indexOf(b);
+                });
+
+                $(data).each(function (key, value) {
+                    $('#PSMonth .floating-select').append('<option value="' + parseInt(key) + 1 + '">' + value + '</option>');
+                });
+                CustomdropdownBindByID('PSMonth');
+            } else {
+                $('#PSMonth').children().remove();
+                $('#PSMonth').append('<select class="floating-select"><option value="0">Select</option></select>');
+                CustomdropdownBindByID('PSMonth');
+            }
+            $('#PSMonth').parent().parent().find('label').removeAttr("style");
+            $('#PSMonth').parent().parent().find('.placeholder').removeAttr("style");
+            $('#PSMonth').parent().parent().find('.placeholder').show();
+        }
+
+    });
+}
+
+function GetQueryStringValues(param) {
+    var url = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    for (var i = 0; i < url.length; i++) {
+        var urlparam = url[i].split('=');
+        if (urlparam[0].toLowerCase() == param.toLowerCase()) {
+            return urlparam[1];
+        }
+    }
+}
+
+function GetFundCategories() {
+    var accessToken = localStorage.getItem(StoreKeys.API_TOKEN);
+    var categories = getSessionWithExpiry(StoreKeys.FUND_CATEGORY_STORE);
+    console.log('data', categories);
+    if (categories == null) {
+        var sessionId = encryptionService.generateUuid(30);
+        var obj = {
+            "Requestid": encryptionService.uuid(),
+            "SessionId": sessionId,
+            "Data": ""
+        };
+        var url = APIURLS.FUND_CATEGORY_API;
+        $.ajax({
+            type: "POST",
+            url: url,
+            headers: {
+                'Token': accessToken
+            },
+            data: JSON.stringify(obj),
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                var decSessionId = data.SessionId;
+                if (!decSessionId) {
+                    if (data.ReturnCode || data.ReturnMsg) {
+                        console.log(data.ReturnMsg);
+                    } else {
+                        console.log('API service is not connected ! Please try again after sometime. ');
+                    }
+                } else {
+                    var dataParsed = JSON.parse(data.Data);
+                    if (dataParsed.ReturnCode == 200) {
+                        $.each(dataParsed.Data, function (index, val) {
+                            console.log("This is val -->", val);
+                            if (val.FundCategoryName.toLowerCase() == "other schemes") {
+                                val.FundCategoryName = "Passive Solutions";
+                            }
+                        });
+                        setSessionWithExpiry(StoreKeys.FUND_CATEGORY_STORE, dataParsed.Data);
+                        $('#FSCategeory').children().remove();
+                        $('#FSCategeory').append('<select class="floating-select"><option value="0">Select</option></select>');
+                        $(dataParsed.Data).each(function (key, value) {
+                            $('#FSCategeory .floating-select').append('<option value="' + parseInt(value.FundCategoryID) + '">' + value.FundCategoryName + '</option>');
+                        });
+                        CustomdropdownBindByID('FSCategeory');
+                    }
+                }
+            }
+        });
+
+    } else {
+
+        $('#FSCategeory').children().remove();
+        $('#FSCategeory').append('<select class="floating-select"><option value="0">Select</option></select>');
+        $(categories).each(function (key, value) {
+            $('#FSCategeory .floating-select').append('<option value="' + parseInt(value.FundCategoryID) + '">' + value.FundCategoryName + '</option>');
+        });
+        CustomdropdownBindByID('FSCategeory');
+
+    }
+
+}
+
+function BindRecentPortfolios() {
+    var url = DataBindUrls.RECENT_PORTFOLIOS;
+
+    $.ajax({
+        type: "POST",
+        url: url,
+        dataType: "html",
+        data: JSON.stringify(),
+        contentType: 'application/json;charset=utf-8',
+        error: function (xhr) { },
+
+        success: function (data) {
+            $('.portfolios-table').show();
+            $('#tblPortfoliosheets').html('');
+            $('#tblPortfoliosheets').html(data);
+        }
+    });
+}
+
+function GetMonthByFundId(FundId, year) {
+    var Folder = "Scheme Portfolios";
+
+    var Req = {
+        FundID: FundId,
+        folder: Folder,
+        year: year
+    };
+    var url = DataBindUrls.MONTHS_BY_YEAR_BY_FUNDID;
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: JSON.stringify(Req),
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        success: function (data) {
+
+
+            if (data.length != 0) {
+                var allMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']; //All months constant
+                data.sort(function (a, b) {
+                    return allMonths.indexOf(a) - allMonths.indexOf(b);
+                });
+                $('#FSMonth').children().remove();
+                $('#FSMonth').append('<select class="floating-select"><option value="0">Select</option></select>');
+                $(data).each(function (key, value) {
+                    $('#FSMonth .floating-select').append('<option value="' + parseInt(key) + 1 + '">' + value + '</option>');
+                });
+                CustomdropdownBindByID('FSMonth');
+            }
+            else {
+                $('#FSMonth').children().remove();
+                $('#FSMonth').append('<select class="floating-select"><option value="0">Select</option></select>');
+                CustomdropdownBindByID('FSMonth');
+            }
+            $('#FSMonth').parent().parent().find('label').removeAttr("style");
+            $('#FSMonth').parent().parent().find('.placeholder').removeAttr("style");
+            $('#FSMonth').parent().parent().find('.placeholder').show();
+        }
+    });
+}
+
+
+function BindPortfolioSheetsQS(FundId, PSFreq) {
+    var url = DataBindUrls.SCHEME_PORTFOLIO_SHEETS_QS;
+    var ReqData = {
+        FundId: FundId,
+        PSFrequency: PSFreq
+    }
+    $.ajax({
+        type: "POST",
+        url: url,
+        dataType: "json",
+        data: JSON.stringify(ReqData),
+        contentType: 'application/json;charset=utf-8',
+        error: function (xhr) {
+
+        },
+        success: function (data) {
+            if (data != "") {
+                window.location.href = data;
+            }
+            $('#tblPortfoliosheets').html('');
+        }
+    });
+}
