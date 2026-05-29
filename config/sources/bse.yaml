@@ -1,0 +1,66 @@
+name: bse
+kind: http
+
+# Cookie warmup required before the JSON API will return data (else an
+# ASP.NET HTML shell comes back with HTTP 200).
+warmup_urls:
+  - "https://www.bseindia.com/"
+  - "https://www.bseindia.com/corporates/List_Scrips.html"
+
+endpoints:
+  list_of_scrips_api:
+    # Verified live: returns a JSON array of all active equity scrips with
+    # SCRIP_CD / Scrip_Name / Status / GROUP / FACE_VALUE / ISIN_NUMBER.
+    url: "https://api.bseindia.com/BseIndiaAPI/api/ListofScripData/w?Group=&Scripcode=&industry=&segment=Equity&status=Active"
+    encoding: "utf-8"
+    artifact: list_of_scrips
+    suffix: json
+    required: false
+    headers:
+      Origin: "https://www.bseindia.com"
+      Referer: "https://www.bseindia.com/corporates/List_Scrips.html"
+      Accept: "application/json, text/plain, */*"
+
+  bhavcopy_fallback:
+    # New unified bhavcopy is a plain CSV (not ZIP). Columns include
+    # FinInstrmId (scrip code), ISIN, TckrSymb, FinInstrmNm, SctySrs.
+    url_template: "https://www.bseindia.com/download/BhavCopy/Equity/BhavCopy_BSE_CM_0_0_0_{ymd}_F_0000.CSV"
+    encoding: "utf-8"
+    artifact: bhavcopy_fallback
+    suffix: csv
+    required: false
+    headers:
+      Referer: "https://www.bseindia.com/markets/MarketInfo/BhavCopy.aspx"
+
+  # Same unified bhavcopy, consumed as the BSE Equity EOD price source.
+  # {ymd} = YYYYMMDD trade date; adapter walks back to the latest trading day.
+  bhavcopy_eod:
+    url_template: "https://www.bseindia.com/download/BhavCopy/Equity/BhavCopy_BSE_CM_0_0_0_{ymd}_F_0000.CSV"
+    encoding: "utf-8"
+    artifact: bhavcopy_equity
+    suffix: csv
+    headers:
+      Referer: "https://www.bseindia.com/markets/MarketInfo/BhavCopy.aspx"
+
+  # Shareholding disclosures. BSE exposes this only per-scrip and not via a
+  # discoverable public JSON route, so it is disabled by default; the pipeline
+  # runs on NSE (which covers the listed universe) and the dedup/merge is wired
+  # to accept BSE rows once a working endpoint is configured here (enabled: true).
+  shareholding:
+    enabled: false
+    url_template: ""
+    artifact: shareholding
+    suffix: json
+
+  # Corporate-action announcements (board intimations, record-date fixings).
+  # AnnGetData filtered to the "Corp. Action" category; paginated via pageno.
+  # {from}/{to} = YYYYMMDD. SCRIP_CD resolves to co_code via CompanyMaster.
+  corp_action_announcements:
+    url_template: "https://api.bseindia.com/BseIndiaAPI/api/AnnGetData/w?strCat=Corp.%20Action&strPrevDate={from_ymd}&strScrip=&strSearch=P&strToDate={to_ymd}&strType=C&pageno={pageno}"
+    encoding: "utf-8"
+    artifact: corp_action_announcements
+    suffix: json
+    headers:
+      Origin: "https://www.bseindia.com"
+      Referer: "https://www.bseindia.com/corporates/ann.html"
+      Accept: "application/json, text/plain, */*"

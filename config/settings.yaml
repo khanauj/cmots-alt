@@ -1,0 +1,29 @@
+project:
+  name: cmots-alt
+  timezone: Asia/Kolkata
+
+paths:
+  root: .
+  storage:
+    raw: storage/raw
+    silver: storage/processed/silver
+    gold: storage/processed/gold
+    output: storage/output
+    cache: storage/cache
+  db: storage/cmots_alt.sqlite
+  logs: logs
+
+logging:
+  level: INFO
+  console: true
+  file: true
+
+retry:
+  attempts: 5
+  initial_wait_seconds: 1.0
+  max_wait_seconds: 30.0
+  multiplier: 2.0
+
+http:
+  default_timeout_seconds: 30
+  user_agent: "cmots-alt/0.1 (+local)"

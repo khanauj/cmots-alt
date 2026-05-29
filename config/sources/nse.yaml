@@ -1,0 +1,66 @@
+name: nse
+kind: http
+
+# NSE blocks naive HTTP clients via TLS fingerprinting; curl_cffi Chrome
+# impersonation in fetchers/http.py handles that. NSE also requires hitting
+# the homepage first to seed cookies — adapter warms up before each fetch.
+warmup_urls:
+  - "https://www.nseindia.com/"
+
+endpoints:
+  equity_l:
+    # Full list of all NSE-listed equity securities.
+    url: "https://nsearchives.nseindia.com/content/equities/EQUITY_L.csv"
+    encoding: "utf-8"
+    artifact: equity_l
+    suffix: csv
+    required: true
+
+  # Industry classification: NSE publishes a per-symbol macro/sector/industry mapping.
+  # The classification file is intermittently re-hosted. Adapter tries primary
+  # then falls back to Nifty Total Market list (~750 symbols with industry).
+  industry_primary:
+    url: "https://nsearchives.nseindia.com/content/equities/Industry_classification.csv"
+    encoding: "utf-8"
+    artifact: industry_classification
+    suffix: csv
+    required: false
+
+  industry_fallback:
+    url: "https://nsearchives.nseindia.com/content/indices/ind_niftytotalmarket_list.csv"
+    encoding: "utf-8"
+    artifact: industry_fallback
+    suffix: csv
+    required: false
+
+  # Security-wise price/volume/deliverable EOD ("full bhavdata"). This is the
+  # only NSE EOD file carrying VWAP (AVG_PRICE), deliverable qty/% and trade
+  # counts. {ddmmyyyy} = trade date; published after market close, so the
+  # adapter walks back to the most recent available trading day.
+  bhavcopy_full:
+    url_template: "https://nsearchives.nseindia.com/products/content/sec_bhavdata_full_{ddmmyyyy}.csv"
+    encoding: "utf-8"
+    artifact: sec_bhavdata_full
+    suffix: csv
+
+  # Shareholding pattern bulk master: one record per company (latest filed quarter)
+  # with summary promoter/public % and a link to the per-company XBRL (full breakdown).
+  shareholding_master:
+    url: "https://www.nseindia.com/api/corporate-share-holdings-master?index=equities"
+    encoding: "utf-8"
+    artifact: shareholding_master
+    suffix: json
+    warmup_urls:
+      - "https://www.nseindia.com/"
+      - "https://www.nseindia.com/companies-listing/corporate-filings-shareholding-pattern"
+
+  # Structured corporate actions (dividend/bonus/split/rights/merger/buyback/FV).
+  # JSON list; dates DD-MM-YYYY. Needs the corporate-filings page in the cookie warmup.
+  corporate_actions:
+    url_template: "https://www.nseindia.com/api/corporates-corporateActions?index=equities&from_date={from_ddmmyyyy}&to_date={to_ddmmyyyy}"
+    encoding: "utf-8"
+    artifact: corporate_actions
+    suffix: json
+    warmup_urls:
+      - "https://www.nseindia.com/"
+      - "https://www.nseindia.com/companies-listing/corporate-filings-actions"

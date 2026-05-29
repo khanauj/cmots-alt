@@ -1,0 +1,253 @@
+# 50 stable sector buckets. Codes are minted by us and must never be reassigned.
+# Codes are 4-digit integers, grouped by sector family (10xx).
+
+buckets:
+  # Financials
+  1010: "Banks - Private Sector"
+  1011: "Banks - Public Sector"
+  1012: "NBFC"
+  1013: "Insurance"
+  1014: "Capital Markets & AMC"
+
+  # IT & Communications
+  1020: "IT - Software & Services"
+  1021: "IT - Hardware"
+  1022: "Telecom Services"
+  1023: "Telecom Equipment"
+  1024: "Internet & E-Commerce"
+
+  # Energy & Utilities
+  1030: "Refineries & Marketing"
+  1031: "Oil & Gas Exploration"
+  1032: "Power - Generation"
+  1033: "Power - Transmission & Distribution"
+  1034: "Gas Distribution & Renewables"
+
+  # Materials
+  1040: "Steel"
+  1041: "Non-Ferrous Metals"
+  1042: "Mining & Minerals"
+  1043: "Cement"
+  1044: "Construction Materials"
+  1045: "Chemicals"
+  1046: "Fertilisers & Agrochemicals"
+  1047: "Paper & Packaging"
+
+  # Industrials
+  1050: "Electrical Equipment"
+  1051: "Industrial Machinery"
+  1052: "Construction & Engineering"
+  1053: "Defence & Aerospace"
+  1054: "Logistics & Shipping"
+
+  # Consumer Discretionary
+  1060: "Automobiles - Passenger Vehicles"
+  1061: "Automobiles - 2 & 3 Wheelers"
+  1062: "Automobiles - Commercial Vehicles"
+  1063: "Auto Components"
+  1064: "Consumer Durables"
+  1065: "Textiles & Apparel"
+
+  # Consumer Staples
+  1070: "FMCG - Foods & Beverages"
+  1071: "FMCG - Personal Care"
+  1072: "Agri & Plantation"
+  1073: "Retail"
+
+  # Healthcare
+  1080: "Pharmaceuticals"
+  1081: "Healthcare Services"
+  1082: "Diagnostics & Medical Devices"
+
+  # Real Estate & Infra
+  1090: "Real Estate"
+  1091: "Infrastructure - Roads"
+  1092: "Infrastructure - Ports & Airports"
+
+  # Other
+  1100: "Diversified / Holding"
+  1101: "Hospitality, Travel & Leisure"
+  1102: "Media & Entertainment"
+  1103: "Education"
+  1104: "Other / Miscellaneous"
+
+# NSE Industry → our sector_code.
+# Keys matched case-insensitively after whitespace collapse.
+# Multiple key variants per bucket because NSE distributes industry names
+# across several files with slightly different spellings.
+nse_industry_map:
+  # Financials
+  "Private Sector Bank": 1010
+  "Banks": 1010
+  "Public Sector Bank": 1011
+  "Finance": 1012
+  "Finance (including NBFCs)": 1012
+  "NBFC": 1012
+  "Holding Company": 1100
+  "Insurance": 1013
+  "General Insurance": 1013
+  "Life Insurance": 1013
+  "Asset Management Company": 1014
+  "Stock Brokers": 1014
+  "Other Financial Services": 1014
+  "Capital Markets": 1014
+  "Financial Services": 1014
+
+  # IT & Communications
+  "IT - Software": 1020
+  "IT Software": 1020
+  "Computers - Software": 1020
+  "IT - Hardware": 1021
+  "Computers - Hardware": 1021
+  "Telecom - Services": 1022
+  "Telecom Services": 1022
+  "Telecom - Cellular & Fixed line services": 1022
+  "Telecom Cables": 1023
+  "Telecom - Equipment & Accessories": 1023
+  "Internet & E-Commerce": 1024
+  "E-Commerce/App based Aggregator": 1024
+  "Internet Software & Services": 1024
+
+  # Energy
+  "Refineries": 1030
+  "Refineries & Marketing": 1030
+  "Petroleum Products": 1030
+  "Oil Exploration": 1031
+  "Oil Exploration & Production": 1031
+  "Crude Oil & Natural Gas": 1031
+  "Power": 1032
+  "Power Generation": 1032
+  "Power Generation/Distribution": 1032
+  "Power - Transmission": 1033
+  "Power - Distribution": 1033
+  "Gas Distribution": 1034
+  "Gas": 1034
+  "Renewable Energy": 1034
+
+  # Materials
+  "Steel": 1040
+  "Iron & Steel": 1040
+  "Iron and Steel Products": 1040
+  "Aluminium": 1041
+  "Non Ferrous Metals": 1041
+  "Non-Ferrous Metals": 1041
+  "Copper": 1041
+  "Diversified Metals": 1041
+  "Mining": 1042
+  "Mining & Mineral Products": 1042
+  "Cement": 1043
+  "Cement & Cement Products": 1043
+  "Construction Materials": 1044
+  "Chemicals": 1045
+  "Specialty Chemicals": 1045
+  "Commodity Chemicals": 1045
+  "Industrial Gases": 1045
+  "Dyes And Pigments": 1045
+  "Fertilizers": 1046
+  "Pesticides": 1046
+  "Agrochemicals": 1046
+  "Pesticides & Agrochemicals": 1046
+  "Paper & Paper Products": 1047
+  "Paper Products": 1047
+  "Packaging": 1047
+
+  # Industrials
+  "Electrical Components & Equipments": 1050
+  "Electrical Equipment": 1050
+  "Heavy Electrical Equipment": 1050
+  "Industrial Machinery": 1051
+  "Industrial Products": 1051
+  "Construction": 1052
+  "Construction & Engineering": 1052
+  "Engineering": 1052
+  "Civil Construction": 1052
+  "Defence": 1053
+  "Aerospace & Defence": 1053
+  "Logistics": 1054
+  "Shipping": 1054
+  "Transport Services": 1054
+  "Railways": 1054
+
+  # Consumer Discretionary
+  "Automobiles - Passenger Cars & Utility Vehicles": 1060
+  "Cars & Utility Vehicles": 1060
+  "Passenger Cars & Utility Vehicles": 1060
+  "2/3 Wheelers": 1061
+  "Automobiles - 2/3 Wheelers": 1061
+  "Auto Two & Three Wheelers": 1061
+  "Commercial Vehicles": 1062
+  "Automobiles-Trucks/Lcv": 1062
+  "Auto Ancillaries": 1063
+  "Auto Components & Equipments": 1063
+  "Consumer Durables": 1064
+  "Household Appliances": 1064
+  "Consumer Electronics": 1064
+  "Textiles": 1065
+  "Textiles - Apparels": 1065
+  "Garments and Apparels": 1065
+  "Other Apparels & Accessories": 1065
+
+  # Consumer Staples
+  "FMCG": 1070
+  "Food Products": 1070
+  "Food Processing": 1070
+  "Beverages": 1070
+  "Personal Products": 1071
+  "Personal Care": 1071
+  "Household & Personal Products": 1071
+  "Tea & Coffee": 1072
+  "Plantation & Plantation Products": 1072
+  "Sugar": 1072
+  "Edible Oil": 1072
+  "Retail": 1073
+  "Retailing": 1073
+
+  # Healthcare
+  "Pharmaceuticals": 1080
+  "Pharmaceuticals & Biotechnology": 1080
+  "Pharmaceuticals & Drugs": 1080
+  "Healthcare Services": 1081
+  "Hospitals": 1081
+  "Diagnostic Centres": 1082
+  "Diagnostics": 1082
+  "Medical Equipment": 1082
+  "Healthcare Equipment & Supplies": 1082
+
+  # Real Estate & Infra
+  "Realty": 1090
+  "Real Estate": 1090
+  "Roads & Highways": 1091
+  "Roads": 1091
+  "Ports": 1092
+  "Airports": 1092
+  "Marine Port & Services": 1092
+
+  # Other
+  "Diversified": 1100
+  "Hotels": 1101
+  "Hotels & Restaurants": 1101
+  "Restaurants": 1101
+  "Tourism & Hospitality": 1101
+  "Leisure Services": 1101
+  "Media - Print/Television/Radio": 1102
+  "Media - Electronic Media": 1102
+  "Entertainment": 1102
+  "Education": 1103
+  "Other Services": 1104
+  "Miscellaneous": 1104
+
+  # NSE macro-economic sector names (as used in Nifty index constituent files).
+  # Coarser than the granular industries above, but NSE-official and high-confidence.
+  "Capital Goods": 1051
+  "Healthcare": 1080
+  "Automobile and Auto Components": 1063
+  "Consumer Services": 1101
+  "Fast Moving Consumer Goods": 1070
+  "Information Technology": 1020
+  "Services": 1104
+  "Metals & Mining": 1042
+  "Oil Gas & Consumable Fuels": 1031
+  "Telecommunication": 1022
+  "Media Entertainment & Publication": 1102
+  "Utilities": 1032
+  "Forest Materials": 1047

@@ -1,0 +1,17 @@
+# Identifier alias / historical-symbol map for the EOD resolver waterfall.
+# A bhavcopy row whose symbol no longer matches CompanyMaster is rewritten to
+# new_symbol, then re-resolved by NSE-symbol exact match.
+#   alias_type: renamed | merged | ticker_change | historical
+#   confidence: 0-1; the resolver only accepts aliases at >= 0.90.
+# Seed with verified NSE corporate-action symbol changes; extend over time.
+old_symbol,new_symbol,alias_type,confidence
+CADILAHC,ZYDUSLIFE,renamed,1.0
+WABCOINDIA,ZFCVINDIA,renamed,1.0
+SRTRANSFIN,SHRIRAMFIN,merged,1.0
+MOTHERSUMI,MOTHERSON,renamed,0.95
+GMRINFRA,GMRAIRPORT,renamed,1.0
+L&TFH,LTF,renamed,1.0
+MINDTREE,LTIMINDTREE,merged,0.95
+LTI,LTIMINDTREE,merged,0.95
+INFRATEL,INDUSTOWER,renamed,1.0
+HDFC,HDFCBANK,merged,1.0

@@ -1,0 +1,12 @@
+name: moneycontrol
+kind: http
+
+# Full equity universe via the A-Z alphabetical stock directory. Each company
+# link is /india/stockpricequote/<sector-slug>/<company-slug>/<mc-code> with the
+# sector encoded in the URL — so 26 page fetches yield sector for ~11k names.
+directory:
+  url_template: "https://www.moneycontrol.com/india/stockpricequote/{letter}"
+  letters: "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  artifact: stock_directory
+  suffix: html
+  throttle_seconds: 0.25

@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/khana/AppData/Local/Temp/claude/D--cmots-alt/a0968539-aa72-4a1b-b7d0-1c778893d1ea/tasks/**)"
+    ]
+  }
+}

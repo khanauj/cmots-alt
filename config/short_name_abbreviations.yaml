@@ -1,0 +1,51 @@
+# Word-level abbreviation dictionary used by transformers/short_name.py.
+# Keys are matched case-insensitively as whole tokens.
+# Values that end with "." are truncations (preserve the period in output).
+# Values that don't end with "." are recognized short forms (no period).
+
+abbreviations:
+  Pharmaceuticals: Pharma
+  Pharmaceutical: Pharma
+  Industries: Inds.
+  Industrial: Indl.
+  Hindustan: Hind.
+  Engineering: Engg.
+  Manufacturing: Mfg.
+  International: Intl.
+  Technologies: Tech.
+  Technology: Tech.
+  Petroleum: Petr.
+  Petrochemicals: Petchem
+  Corporation: Corp.
+  Investments: Invts.
+  Investment: Invt.
+  Financial: Fin.
+  Finance: Fin.
+  Construction: Constr.
+  Communications: Comm.
+  Communication: Comm.
+  Distribution: Distrn.
+  Electronics: Elec.
+  Electrical: Elect.
+  Enterprises: Ent.
+  Enterprise: Ent.
+  Holdings: Hold.
+  Solutions: Soln.
+  Healthcare: Health.
+  Logistics: Logi.
+
+# Tokens stripped from the end of legal_name (case-insensitive, repeatable).
+suffix_tokens:
+  - Ltd
+  - Limited
+  - Pvt
+  - Private
+  - Co
+  - Company
+  - Corp
+  - Corporation
+  - The
+
+# Display cap. Observed CMOTS short names hit exactly 16 chars at the upper
+# bound; underlying field was historically varchar(16).
+max_length: 16

@@ -1,0 +1,312 @@
+# Moneycontrol sector slug -> our 50-bucket sector_code.
+# Slugs come from MC stockpricequote URLs (first path segment).
+# Authored from the slug-frequency vocabulary (count >= ~5 covers ~95% of names).
+# Unmapped slugs fall through to null (reported as unmatched), except the MC
+# catch-all "miscellaneous" which maps to 1104 because that IS MC's classification.
+
+mc_sector_map:
+  # Banks
+  banksprivatesector: 1010
+  bankprivate: 1010
+  bankspublicsector: 1011
+
+  # NBFC / Finance
+  financeinvestments: 1012
+  financeinvestment: 1012
+  financeleasinghirepurchase: 1012
+  financegeneral: 1012
+  financenbfc: 1012
+  financehousing: 1012
+  financetermlendinginstitutions: 1012
+  financeothers: 1012
+
+  # Capital markets
+  financestockbroking: 1014
+
+  # IT
+  computerssoftwaremediumsmall: 1020
+  computerssoftware: 1020
+  software: 1020
+  itservicesconsulting: 1020
+  computerssoftwaretraining: 1020
+  bpoites: 1020
+  computershardware: 1021
+  computerperipherals: 1021
+
+  # Internet
+  onlineservices: 1024
+
+  # Telecom
+  telecommunicationsservice: 1022
+  telecommunicationservice: 1022
+  telecommunicationsequipment: 1023
+  telecommunicationequipment: 1023
+  cablestelephone: 1023
+
+  # Energy
+  refineries: 1030
+  lubricants: 1030
+  oildrillingandexploration: 1031
+  oilexplorationproduction: 1031
+  powergenerationdistribution: 1032
+  powertransmissionequipment: 1033
+  cablespowerothers: 1033
+  cables: 1033
+  renewables: 1034
+
+  # Steel & metals
+  steelmediumsmall: 1040
+  steellarge: 1040
+  ironsteel: 1040
+  steeltubespipes: 1040
+  steelrolling: 1040
+  steelspongeiron: 1040
+  steelcrhrstrips: 1040
+  steelpigiron: 1040
+  steelgpgcsheets: 1040
+  castingsforgings: 1040
+  metalscastingsforgings: 1040
+  aluminium: 1041
+  aluminiumaluminiumproducts: 1041
+  metalsnonferrous: 1041
+  miningminerals: 1042
+
+  # Cement & construction materials
+  cementmajor: 1043
+  cementmini: 1043
+  cement: 1043
+  cementproductsbuildingmaterials: 1044
+  ceramicsgranite: 1044
+  ceramicsmarblegranitesanitaryware: 1044
+  glassglassproducts: 1044
+  otherconstructionmaterials: 1044
+
+  # Chemicals
+  chemicals: 1045
+  specialitychemicals: 1045
+  dyespigments: 1045
+  petrochemicals: 1045
+  rubber: 1045
+  paintsvarnishes: 1045
+  detergents: 1045
+  plastics: 1045
+  plasticproducts: 1045
+  plasticproductsothers: 1045
+
+  # Fertilisers & agrochemicals
+  pesticidesagrochemicals: 1046
+  fertilisers: 1046
+  fertilizers: 1046
+
+  # Paper & packaging
+  paper: 1047
+  paperpaperproducts: 1047
+  packaging: 1047
+  packagingpackagingmaterials: 1047
+  printingstationery: 1047
+  printingpublishing: 1047
+
+  # Electrical / electronics
+  electricequipment: 1050
+  electricals: 1050
+  electronicscomponents: 1050
+  electronicgoods: 1050
+  consumergoodselectronic: 1050
+
+  # Industrial machinery
+  engineering: 1051
+  engineeringindustrialequipments: 1051
+  engineeringheavy: 1051
+  machinetools: 1051
+  bearings: 1051
+  compressors: 1051
+  pumps: 1051
+  fasteners: 1051
+  abrasives: 1051
+  electrodesgraphite: 1051
+  engines: 1051
+  textilesmachinery: 1051
+
+  # Construction & engineering (EPC / infra build)
+  constructioncontractingcivil: 1052
+  constructioncontractingrealestate: 1052
+  constructioncontractinghousing: 1052
+  engineeringconstruction: 1052
+  constructioninfrastructure: 1052
+  infrastructuregeneral: 1052
+  infrastructure: 1052
+
+  # Defence
+  aerospacedefence: 1053
+
+  # Logistics & shipping
+  transportlogistics: 1054
+  logistics: 1054
+  shipping: 1054
+  groundfreightlogisticsservices: 1054
+  couriers: 1054
+
+  # Autos
+  autocarsjeeps: 1060
+  auto23wheelers: 1061
+  automobile23wheelers: 1061
+  autoancillaries: 1063
+  tyres: 1063
+
+  # Consumer durables
+  domesticappliances: 1064
+  consumergoodswhitegoods: 1064
+  diamondcuttingjewellerypreciousmetals: 1064
+  diamondjewellery: 1064
+
+  # Textiles & apparel
+  textilesspinningcottonblended: 1065
+  textilesprocessing: 1065
+  textilesgeneral: 1065
+  textileshosieryknitwear: 1065
+  textilesspinningsyntheticblended: 1065
+  textilesmanmade: 1065
+  textilesreadymadeapparels: 1065
+  textiles: 1065
+  textilesweaving: 1065
+  textilescompositemills: 1065
+  textilesapparel: 1065
+  textilessyntheticsilk: 1065
+  textileswoollenworsted: 1065
+  textilespinning: 1065
+  textilescottonblended: 1065
+  textilesterrytowels: 1065
+  textilesdenim: 1065
+  leatherproducts: 1065
+
+  # FMCG - foods & beverages
+  foodprocessing: 1070
+  edibleoilssolventextraction: 1070
+  vanaspatioils: 1070
+  sugar: 1070
+  consumerfood: 1070
+  breweriesdistilleries: 1070
+  aquaculture: 1070
+  cigarettes: 1070
+  fishpoultrymeatproducts: 1070
+  otheragricultureproducts: 1070
+
+  # FMCG - personal care
+  personalcare: 1071
+  householdpersonalproducts: 1071
+
+  # Agri & plantation
+  plantationsteacoffee: 1072
+  agriculture: 1072
+
+  # Retail / trading
+  retailing: 1073
+  retail: 1073
+  specialityretailers: 1073
+  trading: 1073
+
+  # Pharma
+  pharmaceuticals: 1080
+  pharmaceuticalsdrugs: 1080
+
+  # Healthcare services
+  hospitalsmedicalservices: 1081
+  hospitalhealthcareservices: 1081
+
+  # Diagnostics / medical devices
+  medicalequipmentsuppliesaccessories: 1082
+
+  # Diversified
+  diversified: 1100
+
+  # Hospitality / travel
+  hotels: 1101
+  hotelresortrestaurants: 1101
+  travelservices: 1101
+
+  # Media & entertainment
+  mediaentertainment: 1102
+  media: 1102
+  filmproductiondistributionentertainment: 1102
+  tvbroadcastingsoftwareproduction: 1102
+
+  # Education
+  educationalinstitutions: 1103
+
+  # Catch-all
+  miscellaneous: 1104
+  misccommercialservices: 1104
+
+  # --- Coverage pass 2: genuine MC sector slugs seen on >=2 universe companies. ---
+  # Real estate
+  constructionrealestate: 1090
+  constructionresidentialcommercialcomplexes: 1090
+  realestaterentaldevelopmentoperations: 1090
+
+  # Construction materials
+  refractories: 1044
+  laminatesdecoratives: 1044
+  cementconstructionmaterials: 1044
+
+  # Chemicals
+  commoditychemicals: 1045
+  diversifiedchemicals: 1045
+  othersindustrialgasesfuels: 1045
+  plasticstubespipeshosesfittings: 1045
+  paints: 1045
+
+  # Packaging
+  containerspackaging: 1047
+  packagingmaterialscontainerspackaging: 1047
+  packagingmaterialsplasticproducts: 1047
+  packagingsacksbags: 1047
+  plasticspetbottelsjarscontainers: 1047
+  paperforestproducts: 1047
+
+  # Metals & mining
+  metalsmining: 1042
+  specialtyminingmetals: 1042
+
+  # Electrical / electronics / batteries
+  drycells: 1050
+  batteries: 1050
+  electronics: 1050
+  electrodeselectricalequipments: 1050
+
+  # Power T&D
+  transmissiontowersequipments: 1033
+
+  # Autos
+  autoancillariescastingsforgings: 1063
+  autoancillariesothers: 1063
+  autoancillariesbrakes: 1063
+  autoancillariestyresrubberproducts: 1063
+  autolcvshcvs: 1062
+  autotractors: 1062
+  automobiledealersdistributors: 1073
+
+  # Consumer
+  footwear: 1065
+  watchesaccessories: 1064
+  vegetableoilsproducts: 1070
+  teacoffee: 1072
+  fooddrugretailing: 1073
+
+  # Services
+  courierservices: 1054
+  labslifesciencesservices: 1082
+  telecommunicationsservices: 1022
+  iteducation: 1103
+  leisureservices: 1101
+
+  # Finance / insurance
+  financetermlending: 1012
+  lifehealthinsurance: 1013
+
+# Slugs explicitly treated as NON-company instruments (excluded, not a sector).
+# ETFs and index trackers surface in the MC directory with these slugs.
+non_company_slugs:
+  - etf
+  - gold
+  - kotaknifty50
+  - miraeniftymid
