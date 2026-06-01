@@ -45,6 +45,19 @@ def _scan(domain: str, settings: Settings | None = None) -> pl.LazyFrame | None:
     return pl.scan_parquet(gold_domain_dir(domain, settings) / f"dt={part}.parquet")
 
 
+def _scan_all(domain: str, settings: Settings | None = None) -> pl.LazyFrame | None:
+    """Lazy scan across ALL partitions of a domain (for time-series like EOD prices).
+
+    Each partition holds one trading day; walk-back can make adjacent partitions
+    repeat a day, so callers must dedupe on the natural key after scanning.
+    """
+    d = gold_domain_dir(domain, settings)
+    if not d.exists():
+        return None
+    files = sorted(str(p) for p in d.glob("dt=*.parquet"))
+    return pl.scan_parquet(files) if files else None
+
+
 # ── column projections (gold PascalCase -> response snake_case) ───────────────
 _STOCK = [
     pl.col("co_code"),
@@ -174,7 +187,7 @@ def resolve_co_code(symbol: str, settings: Settings | None = None) -> int | None
 
 def prices(co_code: int, exchange: str | None, from_date: date | None, to_date: date | None,
            limit: int, settings: Settings | None = None) -> list[dict]:
-    lf = _scan("equity_eod", settings)
+    lf = _scan_all("equity_eod", settings)
     if lf is None:
         return []
     lf = lf.filter(pl.col("co_code") == co_code)
@@ -184,6 +197,8 @@ def prices(co_code: int, exchange: str | None, from_date: date | None, to_date: 
         lf = lf.filter(pl.col("TradeDate") >= from_date)
     if to_date:
         lf = lf.filter(pl.col("TradeDate") <= to_date)
+    # Partitions can repeat a trading day (walk-back); collapse on the natural key.
+    lf = lf.unique(subset=["co_code", "TradeDate", "Exchange"], keep="first")
     return lf.select(_PRICE).sort("trade_date", descending=True).limit(limit).collect().to_dicts()
 
 
