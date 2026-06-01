@@ -16,7 +16,7 @@ from fastapi.responses import JSONResponse, RedirectResponse
 
 from ..core.logging import get_logger
 from .config import get_api_settings
-from .routers import admin, mutual_funds, scheduler, stocks, system
+from .routers import admin, mutual_funds, scheduler, stocks, system, ui
 
 log = get_logger("api")
 
@@ -73,6 +73,7 @@ def create_app() -> FastAPI:
     app.include_router(stocks.router)
     app.include_router(mutual_funds.router)
     app.include_router(scheduler.router)
+    app.include_router(ui.router)
 
     @app.get("/", include_in_schema=False)
     async def root() -> RedirectResponse:
