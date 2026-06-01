@@ -23,7 +23,11 @@ class ApiSettings(BaseSettings):
     description: str = (
         "Orchestration layer over the CMOTS-alternative data pipelines. "
         "Serves gold parquet outputs (stocks, prices, corporate actions, "
-        "shareholding, mutual funds) and triggers ingestion pipelines."
+        "shareholding, mutual funds) and triggers ingestion pipelines.\n\n"
+        "### 📊 Master Data Viewer\n"
+        "Browse the full **[Stock Master & Mutual Fund Master &rarr;](/ui)** "
+        "in a searchable, paginated web grid — "
+        "[Stock Master](/ui?view=stocks) · [Mutual Funds Master](/ui?view=mf)."
     )
     version: str = "0.1.0"
 
